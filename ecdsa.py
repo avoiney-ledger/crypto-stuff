@@ -45,3 +45,28 @@ class ECPrivateKey:
     def sign(self, data: bytes, alg: hashes.HashAlgorithm) -> bytes:
         """Sign a message using the given algorythm"""
         return self.obj.sign(data, ec.ECDSA(alg))
+
+
+# Only tools functions
+
+
+def get_ec_public_key_from_hex(
+    pubkey: str, curve_parameter: ec.EllipticCurve
+) -> ec.EllipticCurvePublicKey:
+    """Get an EllipticCurvePublicKey from its hex representation"""
+    pkey_bytes = bytes.fromhex(pubkey)
+    return ec.EllipticCurvePublicKey.from_encoded_point(curve_parameter, pkey_bytes)
+
+
+def verify_ec_signed_message(
+    ec_pubkey: ec.EllipticCurvePublicKey,
+    sig: bytes,
+    message: bytes,
+    alg: hashes.HashAlgorithm,
+) -> None:
+    """
+    Raise InvalidSignatureException
+    if the message has not been signed by the
+    provided signature else returns None.
+    """
+    ec_pubkey.verify(sig, message, ec.ECDSA(alg))
